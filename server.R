@@ -2,23 +2,29 @@ source("helpers.R")
 
 shinyServer(function(input, output) {
   
-  set.seed(122)
-  histdata <- rnorm(500)
-  
-  #plot outputs
-  output$plot1 <- renderPlot({
-    data <- histdata[seq_len(50)]
-    hist(data)
+  clientDataInput <- reactive({
+    clientData <- hoursData[hoursData$Client == input$clientSelect, ]
+    clientData <- clientData[order(clientData$Project),]
+    clientData
   })
   
-  output$plot2 <- renderPlot({
-    data <- histdata[seq_len(50)]
-    hist(data)
+  consultantDataInput <- reactive({
+    hoursData[hoursData$Consultant == input$consultantSelect, ]
   })
   
-  output$plot3 <- renderPlot({
-    data <- histdata[seq_len(50)]
-    hist(data)
+  #plot outputs  
+  output$clientPlot <- renderPlot({
+    clientPlot <- ggplot(clientDataInput(), aes(x = Consultant, y = Total.Hours, fill = factor(Project))) + 
+      geom_bar(stat = "identity") +
+      guides(fill=guide_legend(title="Project")) +
+      ylab("Total Hours")
+    #qplot(sum(Total.Hours), data=clientDataInput(), geom="bar", fill=factor(Consultant), binwidth = 100,
+          #ylab = "Total Hours", xlab = "Staff")
+    clientPlot
+  })
+  
+  output$consultantPlot <- renderPlot({
+    consultantPlot <- ggplot()
   })
   
   #client dashboard valueboxes
@@ -31,13 +37,13 @@ shinyServer(function(input, output) {
   
   output$absRetainerBox <- renderValueBox({
     valueBox(
-      paste0("10"), "Hours Used", icon = icon("calendar"), color = "green"
+      sum(clientDataInput()$Total.Hours), "Hours Used", icon = icon("calendar"), color = "green"
     )
   })
 
   output$percRetainerBox <- renderValueBox({
     valueBox(
-      paste0("25%"), "Retainer Used", icon = icon("dollar"), color = "blue"
+      "25%", "Retainer Used", icon = icon("dollar"), color = "blue"
     )
   })
   

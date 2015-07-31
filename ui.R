@@ -1,7 +1,9 @@
 library(shiny)
 library(shinydashboard)
+library(ggplot2)
 
 hoursData <- read.csv("data/MyHours.csv")
+hoursData <- hoursData[order(hoursData$Client),]
 
 clientList <- unique(as.character(hoursData$Client))
 consultantList <- unique(as.character(hoursData$Consultant))
@@ -49,7 +51,7 @@ dashboardPage(
         
         fluidRow(
           
-          box(plotOutput("plot2", height = 500), width = 12)
+          box(plotOutput("clientPlot", height = 500), width = 12)
           
         ),
       
@@ -77,7 +79,7 @@ dashboardPage(
         ),
         fluidRow(
           
-          box(plotOutput("plot3", height = 500), width = 12)
+          box(plotOutput("consultantPlot", height = 500), width = 12)
           
         ),
                 
