@@ -27,43 +27,60 @@ dashboardPage(
       tabItem(tabName = "overview",
         fluidRow(
           box(
-            title = "Controls",
-            sliderInput("slider", "Number of observations:", 1, 100, 50)
+            title = "Alerts by Client:"
+          ),
+          
+          box(
+            title = "Alerts by Consultant:"
           )
         )
       ),
       
       # Client tab content
       tabItem(tabName = "byclient",
+        
+        fluidRow(
+          box(
+            selectInput("clientSelect", label = "Choose Client:", choices = clientList), width = 6
+          ),
+          
+          valueBoxOutput("totalRetainerBox", width = 6)
+        ),
+        
         fluidRow(
           
-          box(plotOutput("plot2", height = 250)),
+          box(plotOutput("plot2", height = 500), width = 12)
           
-          box(
-            selectInput("consultantSelect", label = "Choose Client:", choices = clientList)
-          )
-      ),
+        ),
       
         fluidRow(
-            valueBoxOutput("absRetainerBox"),
+          valueBoxOutput("absRetainerBox", width = 6),
           
-            valueBoxOutput("percRetainerBox")    
-          )
+          valueBoxOutput("percRetainerBox", width = 6)    
+        ),
+        
+        fluidRow(
+          valueBoxOutput("overserviceAbs", width = 6),
+          
+          valueBoxOutput("overservicePerc", width = 6)
+        )
+        
       ),
       
       # Consultant tab content
       tabItem(tabName = "byconsultant",
+              
         fluidRow(
-          
-          box(plotOutput("plot3", height = 250)),
-          
           box(
             selectInput("consultantSelect", label = "Choose Consultant:", choices = consultantList)
           )
         ),
-        
-        #NEW FLUID ROW FOR OVERSERVICE
-        
+        fluidRow(
+          
+          box(plotOutput("plot3", height = 500), width = 12)
+          
+        ),
+                
         fluidRow(
           
           valueBoxOutput("billableGoalBox"),

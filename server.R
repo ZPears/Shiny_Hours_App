@@ -7,22 +7,28 @@ shinyServer(function(input, output) {
   
   #plot outputs
   output$plot1 <- renderPlot({
-    data <- histdata[seq_len(input$slider)]
+    data <- histdata[seq_len(50)]
     hist(data)
   })
   
   output$plot2 <- renderPlot({
-    data <- histdata[seq_len(input$slider)]
+    data <- histdata[seq_len(50)]
     hist(data)
   })
   
   output$plot3 <- renderPlot({
-    data <- histdata[seq_len(input$slider)]
+    data <- histdata[seq_len(50)]
     hist(data)
   })
   
   #client dashboard valueboxes
 
+  output$totalRetainerBox <- renderValueBox({
+    valueBox(
+      "$12,500", "Total Retainer", icon = icon("dollar"), color = "blue"
+    )
+  })
+  
   output$absRetainerBox <- renderValueBox({
     valueBox(
       paste0("10"), "Hours Used", icon = icon("calendar"), color = "green"
@@ -35,11 +41,17 @@ shinyServer(function(input, output) {
     )
   })
   
-  #ACTUAL RETAINER
+  output$overserviceAbs <- renderValueBox({
+    valueBox(
+      "-60", "Overservice Hours", icon = icon("calendar"), color = "blue"
+    )
+  })
   
-  #OVERSERVICE PERCENT
-  
-  #OVERSERVICE AMOUNT
+  output$overservicePerc <- renderValueBox({
+    valueBox(
+      "-70%", "Overservice Percentage", icon = icon("dollar"), color = "green"
+    )
+  })
     
   #consultant dashboard valueboxes
   
