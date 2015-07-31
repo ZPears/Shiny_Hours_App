@@ -1,4 +1,13 @@
+library(shiny)
 library(shinydashboard)
+
+hoursData <- read.csv("data/MyHours.csv")
+
+clientList <- unique(as.character(hoursData$Client))
+consultantList <- unique(as.character(hoursData$Consultant))
+
+byClient <- aggregate(Total.Hours ~ Client, sum, data = hoursData)
+byConsultant <- aggregate(Total.Hours ~ Consultant, sum, data = hoursData)
 
 dashboardPage(
   dashboardHeader(title = "Greenough Hours Dashboard"),
@@ -28,22 +37,54 @@ dashboardPage(
       tabItem(tabName = "byclient",
         fluidRow(
           
-          box(plotOutput("plot1", height = 250)),
+          box(plotOutput("plot2", height = 250)),
           
           box(
-            selectInput("clientSelect", label = "Choose Client:", choices = clientList)
+            selectInput("consultantSelect", label = "Choose Client:", choices = clientList)
           )
       ),
       
         fluidRow(
+            valueBoxOutput("absRetainerBox"),
+          
             valueBoxOutput("percRetainerBox")    
           )
       ),
       
       # Consultant tab content
       tabItem(tabName = "byconsultant",
-        h2("Consultant tab content")
+        fluidRow(
+          
+          box(plotOutput("plot3", height = 250)),
+          
+          box(
+            selectInput("consultantSelect", label = "Choose Consultant:", choices = consultantList)
+          )
+        ),
+        
+        #NEW FLUID ROW FOR OVERSERVICE
+        
+        fluidRow(
+          
+          valueBoxOutput("billableGoalBox"),
+          
+          valueBoxOutput("assignedClientHoursBox"),
+          
+          valueBoxOutput("billabilityBox")
+          
+        ),
+        
+        fluidRow(
+          
+          valueBoxOutput("availabilityBox"),
+          
+          valueBoxOutput("hoursBilledBox"),
+          
+          valueBoxOutput("utilizationBox")
+          
+        )
       )
+      
     )
   )
 )
