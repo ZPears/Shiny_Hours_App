@@ -3,10 +3,9 @@ library(shinydashboard)
 library(ggplot2)
 
 hoursData <- read.csv("data/MyHours.csv")
-hoursData <- hoursData[order(hoursData$Client),]
 
-clientList <- unique(as.character(hoursData$Client))
-consultantList <- unique(as.character(hoursData$Consultant))
+clientList <- sort(unique(as.character(hoursData$Client)))
+consultantList <- sort(unique(as.character(hoursData$Consultant)))
 
 byClient <- aggregate(Total.Hours ~ Client, sum, data = hoursData)
 byConsultant <- aggregate(Total.Hours ~ Consultant, sum, data = hoursData)
@@ -74,8 +73,10 @@ dashboardPage(
               
         fluidRow(
           box(
-            selectInput("consultantSelect", label = "Choose Consultant:", choices = consultantList)
-          )
+            selectInput("consultantSelect", label = "Choose Consultant:", choices = consultantList), width = 6
+          ),
+          
+          valueBoxOutput("totalHoursBox", width = 6)
         ),
         fluidRow(
           

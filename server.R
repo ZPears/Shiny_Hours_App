@@ -9,7 +9,9 @@ shinyServer(function(input, output) {
   })
   
   consultantDataInput <- reactive({
-    hoursData[hoursData$Consultant == input$consultantSelect, ]
+    consultantData <- hoursData[hoursData$Consultant == input$consultantSelect, ]
+    consultantData <- consultantData[order(consultantData$Project),]
+    consultantData
   })
   
   #plot outputs  
@@ -18,13 +20,15 @@ shinyServer(function(input, output) {
       geom_bar(stat = "identity") +
       guides(fill=guide_legend(title="Project")) +
       ylab("Total Hours")
-    #qplot(sum(Total.Hours), data=clientDataInput(), geom="bar", fill=factor(Consultant), binwidth = 100,
-          #ylab = "Total Hours", xlab = "Staff")
     clientPlot
   })
   
   output$consultantPlot <- renderPlot({
-    consultantPlot <- ggplot()
+    consultantPlot <- ggplot(consultantDataInput(), aes(x = Client, y = Total.Hours, fill = factor(Project))) + 
+      geom_bar(stat = "identity") +
+      guides(fill=guide_legend(title="Project")) +
+      ylab("Total Hours")
+    consultantPlot
   })
   
   #client dashboard valueboxes
@@ -61,33 +65,40 @@ shinyServer(function(input, output) {
     
   #consultant dashboard valueboxes
   
+  output$totalHoursBox <- renderValueBox({
+    valueBox(
+      sum(consultantDataInput()$Total.Hours), "Total Hours", icon = icon("calendar"), color = "blue"
+    )
+  })
+  
   output$billableGoalBox <- renderValueBox({
     valueBox(
-      paste0("25"), "Billable Goal", icon = icon("line-chart"), color = "blue"
+      "100", "Billable Goal", icon = icon("line-chart"), color = "blue"
     )
   })
   
   output$assignedClientHoursBox <- renderValueBox({
     valueBox(
-      paste0("25%"), "Assigned Client Hours", icon = icon("calendar"), color = "green"
+      "100", "Assigned Client Hours", icon = icon("calendar"), color = "green"
     )
   })
   
   output$billabilityBox <- renderValueBox({
     valueBox(
-      paste0("25%"), "Billability", icon = icon("dollar"), color = "blue"
+      "90", "Billability", icon = icon("dollar"), color = "blue"
     )
   })
   
   output$availabilityBox <- renderValueBox({
     valueBox(
-      paste0("25%"), "Availability", icon = icon("calendar"), color = "green"
+      "10", "Availability", icon = icon("calendar"), color = "green"
     )
   })
   
   output$hoursBilledBox <- renderValueBox({
     valueBox(
-      paste0("25%"), "Hours Billed", icon = icon("line-chart"), color = "blue"
+      sum(subset(consultantDataInput(), Client != "Agency")$Total.Hours),
+      "Hours Billed", icon = icon("line-chart"), color = "blue"
     )
   })
   
