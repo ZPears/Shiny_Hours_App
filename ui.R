@@ -62,8 +62,6 @@ dashboardPage(
           )
         ),
         
-        #NEW FLUID ROW FOR OVERSERVICE
-        
         fluidRow(
           
           valueBoxOutput("billableGoalBox"),
