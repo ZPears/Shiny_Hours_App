@@ -2,19 +2,13 @@ library(shiny)
 library(shinydashboard)
 library(ggplot2)
 
-hoursData <- read.csv("data/MyHours.csv")
-
-clientList <- sort(unique(as.character(hoursData$Client)))
-consultantList <- sort(unique(as.character(hoursData$Consultant)))
-
-byClient <- aggregate(Total.Hours ~ Client, sum, data = hoursData)
-byConsultant <- aggregate(Total.Hours ~ Consultant, sum, data = hoursData)
-
 dashboardPage(
   dashboardHeader(title = "Greenough Hours Dashboard"),
   #Implement some message menus here
   
   dashboardSidebar(
+    fileInput("hoursfile", "Upload Hours:", accept = c("text/csv", ".csv")),
+    br(),
     sidebarMenu(
       menuItem("Overview", tabName="overview", icon=icon("dashboard")),
       menuItem("By Client", tabName="byclient", icon=icon("th")),
@@ -27,8 +21,6 @@ dashboardPage(
       # Overview tab content
       tabItem(tabName = "overview",
               
-        # IMPLEMENT FILE UPLOAD HERE EVENTUALLY      
-        
         fluidRow(
           box(
             title = "Alerts by Client:"
@@ -38,6 +30,7 @@ dashboardPage(
             title = "Alerts by Consultant:"
           )
         )
+        
       ),
       
       # Client tab content
@@ -45,7 +38,7 @@ dashboardPage(
         
         fluidRow(
           box(
-            selectInput("clientSelect", label = "Choose Client:", choices = clientList), width = 6
+            uiOutput("clientSelector"), width = 6
           ),
           
           valueBoxOutput("totalRetainerBox", width = 6)
@@ -76,7 +69,7 @@ dashboardPage(
               
         fluidRow(
           box(
-            selectInput("consultantSelect", label = "Choose Consultant:", choices = consultantList), width = 6
+            uiOutput("consultantSelector"), width = 6
           ),
           
           valueBoxOutput("totalHoursBox", width = 6)

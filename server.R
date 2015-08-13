@@ -1,20 +1,30 @@
-source("helpers.R")
-
 shinyServer(function(input, output) {
   
+  #reactive objects
+  hoursData <- reactive({
+    hrsfile <- input$hoursfile
+    
+    if (is.null(hrsfile)) return(NULL)
+    
+    read.csv(hrsfile$datapath)
+
+  })
+  
   clientDataInput <- reactive({
-    clientData <- hoursData[hoursData$Client == input$clientSelect, ]
+    data <- hoursData()
+    clientData <- data[data$Client == input$clientSelector, ]
     clientData <- clientData[order(clientData$Project),]
     clientData
   })
   
   consultantDataInput <- reactive({
-    consultantData <- hoursData[hoursData$Consultant == input$consultantSelect, ]
+    data <- hoursData()
+    consultantData <- data[data$Consultant == input$consultantSelector, ]
     consultantData <- consultantData[order(consultantData$Project),]
     consultantData
   })
   
-  #plot outputs  
+  #plot outputs
   output$clientPlot <- renderPlot({
     clientPlot <- ggplot(clientDataInput(), aes(x = Consultant, y = Total.Hours, fill = factor(Project))) + 
       geom_bar(stat = "identity") +
@@ -29,6 +39,27 @@ shinyServer(function(input, output) {
       guides(fill=guide_legend(title="Project")) +
       ylab("Total Hours")
     consultantPlot
+  })
+  
+  #selectors
+  output$clientSelector <- renderUI({
+    data <- hoursData()
+    if (is.null(data)) return(NULL)
+    
+    selectInput("clientSelector", label = "Choose Client:", 
+                sort(unique(as.character(data$Client)))
+                )
+    
+  })
+  
+  output$consultantSelector <- renderUI({
+    data <- hoursData()
+    if (is.null(data)) return(NULL)
+    
+    selectInput("consultantSelector", label = "Choose Consultant:", 
+                sort(unique(as.character(data$Consultant)))
+    )
+    
   })
   
   #client dashboard valueboxes
