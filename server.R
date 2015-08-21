@@ -25,6 +25,14 @@ shinyServer(function(input, output) {
     clientData
   })
   
+  retainers <- reactive({
+    data <- projData()
+    retainers <- data[data$STAFF == "Actual retainer",][2,]
+    retainers <- retainers[5:(which(colnames(retainers)=="billable.goal"))]
+    retainers <- retainers[names(retainers) != "billable.goal"]
+    retainers
+  })
+  
   consultantDataInput <- reactive({
     data <- hoursData()
     consultantData <- data[data$Consultant == input$consultantSelector, ]
@@ -72,15 +80,18 @@ shinyServer(function(input, output) {
   
   #client dashboard valueboxes
 
-  output$totalRetainerBox <- renderValueBox({
+  output$totalRetainerBox <- renderUI({
+    retainers <- retainers()
+    ans <- paste("$", as.character(retainers[,names(retainers)==input$clientSelector]))
+    
     valueBox(
-      "$12,500", "Total Retainer", icon = icon("dollar"), color = "blue"
+      ans, "Total Retainer", icon = icon("dollar"), color = "blue", width=12
     )
   })
   
   output$absRetainerBox <- renderValueBox({
     valueBox(
-      sum(clientDataInput()$Total.Hours), "Hours Used", icon = icon("calendar"), color = "green"
+      "NYI", "Hours Used", icon = icon("calendar"), color = "green"
     )
   })
 
