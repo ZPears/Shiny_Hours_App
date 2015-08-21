@@ -15,10 +15,16 @@ dashboardPage(
     ),
     br(), br(),
     fileInput("hoursfile", "Upload Hours:", accept = c("text/csv", ".csv")),
-    fileInput("projectionfile", "Upload Projections:", accept = c("application/vnd.ms-excel"))
+    fileInput("projectionfile", "Upload Projections:", accept = c("application/vnd.ms-excel", '.xlsx')),
+    downloadButton("downloadData", "Download Spreadsheet")
   ),
   
   dashboardBody(
+    
+    tags$head(
+      tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+    ),
+    
     tabItems(
       # Overview tab content
       tabItem(tabName = "overview",

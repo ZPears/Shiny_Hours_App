@@ -40,6 +40,17 @@ shinyServer(function(input, output) {
     consultantData
   })
   
+  #download handler
+  output$downloadData <- downloadHandler(
+    filename <- function() {
+      paste("Downloaded Data", ".xlsx", sep="")
+    },
+    
+    content <- function(file) {
+      write.xlsx(projData(), file)
+    }
+  )
+  
   #plot outputs
   output$clientPlot <- renderPlot({
     clientPlot <- ggplot(clientDataInput(), aes(x = Consultant, y = Total.Hours, fill = factor(Project))) + 
