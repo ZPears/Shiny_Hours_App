@@ -1,19 +1,21 @@
 library(shiny)
 library(shinydashboard)
 library(ggplot2)
+library(openxlsx)
 
 dashboardPage(
   dashboardHeader(title = "Greenough Hours Dashboard"),
   #Implement some message menus here
   
   dashboardSidebar(
-    fileInput("hoursfile", "Upload Hours:", accept = c("text/csv", ".csv")),
-    br(),
     sidebarMenu(
       menuItem("Overview", tabName="overview", icon=icon("dashboard")),
       menuItem("By Client", tabName="byclient", icon=icon("th")),
       menuItem("By Consultant", tabName="byconsultant", icon=icon("th"))
-    )
+    ),
+    br(), br(),
+    fileInput("hoursfile", "Upload Hours:", accept = c("text/csv", ".csv")),
+    fileInput("projectionfile", "Upload Projections:", accept = c("application/vnd.ms-excel"))
   ),
   
   dashboardBody(

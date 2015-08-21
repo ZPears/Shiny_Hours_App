@@ -1,13 +1,21 @@
+library(shiny)
+library(shinydashboard)
+library(ggplot2)
+library(openxlsx)
+
 shinyServer(function(input, output) {
   
   #reactive objects
   hoursData <- reactive({
     hrsfile <- input$hoursfile
-    
     if (is.null(hrsfile)) return(NULL)
-    
     read.csv(hrsfile$datapath)
-
+  })
+  
+  projData <- reactive({
+    projfile <- input$projectionfile
+    if (is.null(projfile)) return(NULL)
+    read.xlsx(projfile$datapath)
   })
   
   clientDataInput <- reactive({
