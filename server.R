@@ -40,6 +40,17 @@ shinyServer(function(input, output) {
     consultantData
   })
   
+  finalFile <- reactive({
+    projData <- projData()
+    hoursData <- hoursData()
+    for (staff in projData$STAFF) {
+      if (staff != "EVP" | "VP" | "Director" | "Manager" | "Account Supervisor" | "Account Executive") {
+        
+      }
+    }
+    
+  })
+  
   #download handler
   output$downloadData <- downloadHandler(
     filename <- function() {

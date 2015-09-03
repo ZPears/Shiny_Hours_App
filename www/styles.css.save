@@ -1,0 +1,8 @@
+#downloadData {
+	
+	margin-left: 15px;
+}
+
+.skin-blue .sidebar a {
+	color: #000000;
+}
