@@ -1,2 +1,6 @@
 data/MyHours.csv
 www/logo.png
+.RData
+.Rhistory
+rsconnect/
+
