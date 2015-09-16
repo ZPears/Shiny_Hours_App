@@ -15,7 +15,9 @@ shinyServer(function(input, output) {
   projData <- reactive({
     projfile <- input$projectionfile
     if (is.null(projfile)) return(NULL)
-    read.xlsx(projfile$datapath)
+    projData <- read.xlsx(projfile$datapath)
+    names(projData) <- gsub("\\.", " ", names(projData))
+    projData
   })
   
   clientDataInput <- reactive({
@@ -28,7 +30,7 @@ shinyServer(function(input, output) {
   retainers <- reactive({
     data <- projData()
     retainers <- data[data$STAFF == "Actual retainer",][2,]
-    retainers <- retainers[5:(which(colnames(retainers)=="billable.goal"))]
+    retainers <- retainers[5:(which(colnames(retainers)=="billable goal"))]
     retainers <- retainers[names(retainers) != "billable.goal"]
     retainers
   })
