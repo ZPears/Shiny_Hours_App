@@ -1,20 +1,19 @@
 uncalcables <- c("Total hours plan", "Total retainer used", "Actual retainer", "OVERSERVICE", "OVERSERVICE %", "EVP", "VP", "Director", "Manager", "Account Supervisor", "Account Executive")
 
 buildFinalData <- function(projData, hoursData) {
-  finalData <- projData
+  finalData <- projData[,!(names(projData) == '"A" Accounts')]
   for (staff in finalData$STAFF) {
     if (!is.na(staff) & !(staff %in% uncalcables)) {
-      hoursVector <- finalData[!is.na(finalData$STAFF) & finalData$STAFF == staff,][5:(which(colnames(finalData)=="billable goal")-1)]
-      finalData[!is.na(finalData$STAFF) & finalData$STAFF == staff,][5:(which(colnames(finalData)=="billable goal")-1)] <- calcHours(hoursData, hoursVector, staff)
+      hoursVector <- finalData[!is.na(finalData$STAFF) & finalData$STAFF == staff,][4:(which(colnames(finalData)=="billable goal")-1)]
+      finalData[!is.na(finalData$STAFF) & finalData$STAFF == staff,][4:(which(colnames(finalData)=="billable goal")-1)] <- calcHours(hoursData, hoursVector, staff)
     }
   }
   
-  clientsLength <- 5:(which(colnames(finalData)=="billable goal")-1)
-  
-  print(clientsLength)
+  clientsLength <- 4:(which(colnames(finalData)=="billable goal")-1)
   
   for (colinc in clientsLength) {
     finalData[!is.na(finalData$STAFF) & finalData$STAFF=="Total retainer used", colinc] <- sumCol(finalData, colinc)
+    finalData[!is.na(finalData$STAFF) & finalData$STAFF=="OVERSERVICE", colinc] <- calcOverservice(finalData, colinc)
   }
   
   finalData
@@ -54,8 +53,14 @@ sumCol <- function(finalData, columnNumber) {
   sum <- 0
   for (rowinc in 1:length(finalData$STAFF)) {
     if (!is.na(finalData[rowinc,1]) & !(finalData[rowinc,1] %in% uncalcables)) {
-      sum <- sum + (finalData[rowinc,4] * finalData[rowinc,columnNumber])
+      sum <- sum + (finalData[rowinc,3] * finalData[rowinc,columnNumber])
     }
   }
   sum
+}
+
+calcOverservice <- function(finalData, columnNumber) {
+  usage <- newFinal[!is.na(newFinal$STAFF) & newFinal$STAFF == "Total retainer used",columnNumber]
+  retainer <- newFinal[!is.na(newFinal$STAFF) & newFinal$STAFF == "Actual retainer",columnNumber]
+  return(usage - retainer)
 }

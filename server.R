@@ -56,7 +56,7 @@ shinyServer(function(input, output) {
   #download handler
   output$downloadData <- downloadHandler(
     filename <- function() {
-      paste("Downloaded Data", ".xlsx", sep="")
+      paste("Actuals", ".xlsx", sep="")
     },
     
     content <- function(file) {
