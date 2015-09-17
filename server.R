@@ -17,7 +17,7 @@ shinyServer(function(input, output) {
   projData <- reactive({
     projfile <- input$projectionfile
     if (is.null(projfile)) return(NULL)
-    projData <- read.xlsx(projfile$datapath)
+    projData <- read.xlsx(projfile$datapath, skipEmptyRows = FALSE)
     names(projData) <- gsub("\\.", " ", names(projData))
     projData
   })
@@ -46,7 +46,9 @@ shinyServer(function(input, output) {
   
   finalFile <- reactive({
     projData <- projData()
+    if (is.null(projData)) return(NULL)
     hoursData <- hoursData()
+    if (is.null(hoursData)) return(NULL)
     finalFile <- buildFinalData(projData, hoursData)
     finalFile
   })
