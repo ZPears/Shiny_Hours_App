@@ -37,6 +37,10 @@ dashboardPage(
           box(
             title = "Alerts by Consultant:"
           )
+        ),
+        
+        fluidRow(
+          dataTableOutput('dataTable')
         )
         
       ),

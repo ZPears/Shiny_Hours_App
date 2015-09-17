@@ -3,6 +3,8 @@ library(shinydashboard)
 library(ggplot2)
 library(openxlsx)
 
+source("helpers.R")
+
 shinyServer(function(input, output) {
   
   #reactive objects
@@ -45,12 +47,8 @@ shinyServer(function(input, output) {
   finalFile <- reactive({
     projData <- projData()
     hoursData <- hoursData()
-    for (staff in projData$STAFF) {
-      if (staff != "EVP" | "VP" | "Director" | "Manager" | "Account Supervisor" | "Account Executive") {
-        
-      }
-    }
-    
+    finalFile <- buildFinalData(projData, hoursData)
+    finalFile
   })
   
   #download handler
@@ -60,7 +58,7 @@ shinyServer(function(input, output) {
     },
     
     content <- function(file) {
-      write.xlsx(projData(), file)
+      write.xlsx(finalFile(), file)
     }
   )
   
@@ -103,6 +101,10 @@ shinyServer(function(input, output) {
   })
   
   #client dashboard valueboxes
+  
+  output$dataTable <- renderDataTable({
+    finalFile()
+  })
 
   output$totalRetainerBox <- renderUI({
     retainers <- retainers()
