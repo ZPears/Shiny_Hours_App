@@ -31,9 +31,7 @@ shinyServer(function(input, output) {
   
   retainers <- reactive({
     data <- projData()
-    retainers <- data[data$STAFF == "Actual retainer",][2,]
-    retainers <- retainers[5:(which(colnames(retainers)=="billable goal"))]
-    retainers <- retainers[names(retainers) != "billable.goal"]
+    retainers <- data[!is.na(data$STAFF) & data$STAFF == "Actual retainer",][4:(which(colnames(data)=="billable goal")-1)]
     retainers
   })
   
@@ -89,7 +87,6 @@ shinyServer(function(input, output) {
     selectInput("clientSelector", label = "Choose Client:", 
                 sort(unique(as.character(data$Client)))
                 )
-    
   })
   
   output$consultantSelector <- renderUI({
@@ -99,15 +96,10 @@ shinyServer(function(input, output) {
     selectInput("consultantSelector", label = "Choose Consultant:", 
                 sort(unique(as.character(data$Consultant)))
     )
-    
   })
   
   #client dashboard valueboxes
   
-  output$dataTable <- renderDataTable({
-    finalFile()
-  })
-
   output$totalRetainerBox <- renderUI({
     retainers <- retainers()
     ans <- paste("$", as.character(retainers[,names(retainers)==input$clientSelector]))
@@ -123,11 +115,20 @@ shinyServer(function(input, output) {
     )
   })
 
-  output$percRetainerBox <- renderValueBox({
+  output$retainerSpentBox <- renderUI({
+    data <- finalFile()
+    ans <- paste("$", as.character(!is.na(data$STAFF)  & data[data$STAFF == "Total retainer used", names(data)==input$clientSelector]))
+    
     valueBox(
-      "25%", "Retainer Used", icon = icon("dollar"), color = "blue"
+      ans, "Retainer Used", icon = icon("dollar"), color = "blue", width=12
     )
   })
+  
+  #output$percRetainerBox <- renderValueBox({
+  #  valueBox(
+  #    finalFile()[], "Retainer Used", icon = icon("dollar"), color = "blue"
+  #  )
+  #})
   
   output$overserviceAbs <- renderValueBox({
     valueBox(

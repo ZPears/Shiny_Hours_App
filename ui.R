@@ -37,12 +37,6 @@ dashboardPage(
           box(
             title = "Alerts by Consultant:"
           )
-        ),
-        
-        fluidRow(
-          box(
-          dataTableOutput('dataTable'), width = 12
-          )
         )
         
       ),
@@ -67,7 +61,7 @@ dashboardPage(
         fluidRow(
           valueBoxOutput("absRetainerBox", width = 6),
           
-          valueBoxOutput("percRetainerBox", width = 6)    
+          valueBoxOutput("retainerSpentBox", width = 6)    
         ),
         
         fluidRow(
