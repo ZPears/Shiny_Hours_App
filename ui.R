@@ -40,7 +40,9 @@ dashboardPage(
         ),
         
         fluidRow(
-          dataTableOutput('dataTable')
+          box(
+          dataTableOutput('dataTable'), width = 12
+          )
         )
         
       ),
