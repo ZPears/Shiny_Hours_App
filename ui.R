@@ -2,6 +2,7 @@ library(shiny)
 library(shinydashboard)
 library(ggplot2)
 library(openxlsx)
+library(lubridate)
 
 dashboardPage(
   dashboardHeader(title = "Greenough Hours Dashboard"),
@@ -13,7 +14,7 @@ dashboardPage(
       menuItem("By Consultant", tabName="byconsultant", icon=icon("th"))
     ),
     br(),
-    dateRangeInput('dateRange', label = 'Date Range', start = Sys.Date(), end = Sys.Date(),  format = "mm/dd/yy"),
+    dateRangeInput('dateRange', label = 'Date Range', start = floor_date(Sys.Date(), unit="month"), end = Sys.Date(),  format = "mm/dd/yy"),
     br(), br(),
     fileInput("hoursfile", "Upload Hours:", accept = c("text/csv", ".csv")),
     fileInput("projectionfile", "Upload Projections:", accept = c("application/vnd.ms-excel", '.xlsx')),
