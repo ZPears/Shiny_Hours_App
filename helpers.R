@@ -95,3 +95,23 @@ findProjOverage <- function(finalData, dateRange) {
   }
   warnings
 }
+
+findConsultOverage <- function(projData, finalData, dateRange) {
+  clientsLength <- (which(colnames(finalData)=="Rate")+1):(which(colnames(finalData)=="billable goal")-1)
+  consultants <- finalData$STAFF[!is.na(finalData$STAFF) & !(finalData$STAFF %in% uncalcables)]
+  consultWarnings <- character(length=0)
+  clientWarnings <- character(length=0)
+  for (consultant in consultants) {
+    for (i in clientsLength) {
+      if (as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant,i]) > projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i] * dateRange) {
+        print(paste(consultant, names(finalData[,i:(i+1)])[1]))
+        print(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant,i])
+        print(projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i])
+        print(dateRange)
+        consultWarnings <- append(consultWarnings, consultant)
+        clientWarnings <- append(clientWarnings, names(finalData[,i:(i+1)][1]))
+      }
+    }
+  }
+  data.frame(consultWarnings, clientWarnings)
+}

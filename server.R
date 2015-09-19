@@ -59,10 +59,21 @@ shinyServer(function(input, output) {
   })
   
   clientAlerts <- reactive({
+    if (is.null(finalFile())) return("<strong>Upload your files to begin.</strong>")
     alerts <- findProjOverage(finalFile(), dateRange())
     output <- character(length=0)
     for (i in 1:length(alerts)) {
-      output <- append(output, paste0("<div id=alert><strong>", alerts[i], "</strong></div>", " has exceeded its retainer.", "<br/><br/>"))
+      output <- append(output, paste0("<div id=alert><strong>", alerts[i], "</strong></div>", " has exceeded its retainer. <strong>(", subset(finalFile(), STAFF == "SERVICE %", names(finalFile()) == alerts[i]),  ")</strong> <br/><br/>"))
+    }
+    output
+  })
+  
+  consultantAlerts <- reactive({
+    if (is.null(finalFile())) return("<strong>Upload your files to begin.</strong>")
+    alerts <- findConsultOverage(projData(), finalFile(), dateRange())
+    output <- character(length=0)
+    for (i in 1:nrow(alerts)) {
+      output <- append(output, paste0("<div id=alert><strong>", alerts[i,1], "</strong></div>", " has exceeded projections on <strong>", alerts[i,2], "</strong><br/><br/>"))
     }
     output
   })
@@ -121,6 +132,12 @@ shinyServer(function(input, output) {
   output$clientAlerts <- renderUI(
     HTML(
       clientAlerts()
+    )
+  )
+  
+  output$consultantAlerts <- renderUI(
+    HTML(
+      consultantAlerts()
     )
   )
   
