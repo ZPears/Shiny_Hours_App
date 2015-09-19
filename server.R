@@ -106,16 +106,27 @@ shinyServer(function(input, output) {
   
   output$totalRetainerBox <- renderUI({
     retainers <- retainers()
-    ans <- paste("$", as.character(retainers[,names(retainers)==input$clientSelector]))
+    if (input$clientSelector == "Agency") {
+      ans <- "NA"
+    } else {
+    ans <- paste0("$", as.character(retainers[,names(retainers)==input$clientSelector]))
+    }
     
     valueBox(
       ans, "Total Retainer", icon = icon("dollar"), color = "blue", width=12
     )
   })
   
-  output$absRetainerBox <- renderValueBox({
+  output$absRetainerBox <- renderUI({
+    data <- finalFile()
+    if (input$clientSelector == "Agency") {
+      ans <- sum(subset(hoursData(), Client=="Agency")$Total.Hours)
+    } else {
+      ans <- data[!is.na(data$STAFF) & data$STAFF == "Total hours plan", names(data)==input$clientSelector]
+    }
+    
     valueBox(
-      "NYI", "Hours Used", icon = icon("calendar"), color = "green"
+      ans, "Hours Used", icon = icon("calendar"), color = "green", width = 14
     )
   })
 
@@ -133,21 +144,38 @@ shinyServer(function(input, output) {
     )
   })
   
-  #output$percRetainerBox <- renderValueBox({
-  #  valueBox(
-  #    finalFile()[], "Retainer Used", icon = icon("dollar"), color = "blue"
-  #  )
-  #})
-  
   output$overserviceAbs <- renderValueBox({
+    data <- finalFile()
+    projData <- projData()
+    actual <- as.numeric(data[!is.na(data$STAFF) & data$STAFF == "Total hours plan", names(data)==input$clientSelector])
+    print(actual)
+    expected <- projData[!is.na(projData$STAFF) & projData$STAFF == "Total hours plan", names(projData)==input$clientSelector]
+    print(expected)
+    if (input$clientSelector == "Agency") {
+      ans <- "NA"
+    } else {
+      if (expected - actual > 0) {
+        ans <- 0
+      } else {
+        ans <- actual - expected
+      }
+    }
+    
     valueBox(
-      "-60", "Overservice Hours", icon = icon("calendar"), color = "blue"
+      ans, "Overservice Hours", icon = icon("calendar"), color = "blue", width = 14
     )
   })
   
   output$overservicePerc <- renderValueBox({
+    data <- finalFile()
+    if (input$clientSelector == "Agency") {
+      ans <- "NA"
+    } else {
+      ans <- data[!is.na(data$STAFF) & data$STAFF == "SERVICE %", names(data)==input$clientSelector]
+    }
+    
     valueBox(
-      "-70%", "Overservice Percentage", icon = icon("dollar"), color = "green"
+      ans, "Service Percentage", icon = icon("dollar"), color = "green", width = 14
     )
   })
     

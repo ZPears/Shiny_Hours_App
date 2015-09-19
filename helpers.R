@@ -16,6 +16,7 @@ buildFinalData <- function(projData, hoursData) {
     finalData[!is.na(finalData$STAFF) & finalData$STAFF=="Total retainer used", colinc] <- sumCol(finalData, colinc)
     finalData[!is.na(finalData$STAFF) & finalData$STAFF=="OVERSERVICE", colinc] <- calcOverservice(finalData, colinc)
     finalData[!is.na(finalData$STAFF) & finalData$STAFF=="SERVICE %", colinc] <- calcOverPerc(finalData, colinc)
+    finalData[!is.na(finalData$STAFF) & finalData$STAFF=="Total hours plan", colinc] <- calcHoursUsed(finalData, colinc)
   }
   
   finalData
@@ -49,6 +50,10 @@ calcHours <- function(hoursData, hoursVector, staff) {
   
   return(finalVector)
    
+}
+
+calcHoursUsed <- function(finalData, columnNumber) {
+  sum(as.numeric(finalData[!is.na(finalData$STAFF) & !(finalData$STAFF %in% uncalcables) , columnNumber]), na.rm=TRUE)
 }
 
 sumCol <- function(finalData, columnNumber) {
