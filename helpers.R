@@ -87,7 +87,7 @@ findProjOverage <- function(finalData, dateRange) {
   clientsLength <- (which(colnames(finalData)=="Rate")+1):(which(colnames(finalData)=="billable goal")-1)
   warnings <- character(length=0)
   for (colinc in clientsLength) {
-    projected <- as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Actual retainer",colinc]) * dateRange
+    projected <- (as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Actual retainer",colinc]) * dateRange) * 1.05
     actual <- as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Total retainer used",colinc])
     if (actual > projected) {
       warnings <- append(warnings, names(finalData[,colinc:(colinc+1)][1]))

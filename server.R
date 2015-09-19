@@ -58,7 +58,12 @@ shinyServer(function(input, output) {
   })
   
   clientAlerts <- reactive({
-    findProjOverage(finalFile(), dateRange())
+    alerts <- findProjOverage(finalFile(), dateRange())
+    output <- character(length=0)
+    for (i in 1:length(alerts)) {
+      output <- append(output, paste0("<strong>", alerts[i], "</strong>", " has exceeded its retainer.", "<br/><br/>"))
+    }
+    output
   })
   
   #download handler
@@ -112,8 +117,10 @@ shinyServer(function(input, output) {
     dateRange()
   )
   
-  output$clientAlerts <- renderText(
-    clientAlerts()
+  output$clientAlerts <- renderUI(
+    HTML(
+      clientAlerts()
+    )
   )
   
   #output$mytable <- renderDataTable({

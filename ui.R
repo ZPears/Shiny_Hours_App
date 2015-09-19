@@ -33,19 +33,22 @@ dashboardPage(
               
         fluidRow(
           box(
-            title = "Alerts by Client:"
+            title = "Alerts by Client:",
+            htmlOutput("clientAlerts"),
+            height = 500
           ),
           
           box(
-            title = "Alerts by Consultant:"
-          )
-        ),
-        
-        fluidRow(
-          box(
-            textOutput("clientAlerts")
+            title = "Alerts by Consultant:",
+            height = 500
           )
         )
+        
+        #fluidRow(
+        #  box(
+        #    textOutput("clientAlerts")
+        #  )
+        #)
         
       ),
       
