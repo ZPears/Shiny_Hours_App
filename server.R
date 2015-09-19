@@ -48,6 +48,8 @@ shinyServer(function(input, output) {
     hoursData <- hoursData()
     if (is.null(hoursData)) return(NULL)
     finalFile <- buildFinalData(projData, hoursData)
+    finalFile$`Billability -Client Only` <- round(finalFile$`Billability -Client Only` * 100, 2)
+    finalFile$`% Utilization` <- round(finalFile$`% Utilization` * 100, 2)
     finalFile
   })
   
@@ -148,9 +150,7 @@ shinyServer(function(input, output) {
     data <- finalFile()
     projData <- projData()
     actual <- as.numeric(data[!is.na(data$STAFF) & data$STAFF == "Total hours plan", names(data)==input$clientSelector])
-    print(actual)
     expected <- projData[!is.na(projData$STAFF) & projData$STAFF == "Total hours plan", names(projData)==input$clientSelector]
-    print(expected)
     if (input$clientSelector == "Agency") {
       ans <- "NA"
     } else {
@@ -188,27 +188,40 @@ shinyServer(function(input, output) {
     )
   })
   
-  output$billableGoalBox <- renderValueBox({
+  output$billableGoalBox <- renderUI({
+    data <- projData()
+    ans <- data[!is.na(data$STAFF) & data$STAFF == input$consultantSelector, names(data)=="billable goal"]
+    
     valueBox(
-      "100", "Billable Goal", icon = icon("line-chart"), color = "blue"
+      ans, "Billable Goal", icon = icon("line-chart"), color = "blue", width = 14
     )
   })
   
-  output$assignedClientHoursBox <- renderValueBox({
+  output$assignedClientHoursBox <- renderUI({
+    data <- projData()
+    ans <- data[!is.na(data$STAFF) & data$STAFF == input$consultantSelector, names(data)=="Assigned Client Hours"]
+    
     valueBox(
-      "100", "Assigned Client Hours", icon = icon("calendar"), color = "green"
+      ans, "Assigned Client Hours", icon = icon("calendar"), color = "green", width = 14
     )
   })
   
-  output$billabilityBox <- renderValueBox({
+  output$billabilityBox <- renderUI({
+    data <- finalFile()
+    ans <- paste0(data[!is.na(data$STAFF) & data$STAFF == input$consultantSelector, names(data)=="Billability -Client Only"], "%")
     valueBox(
-      "90", "Billability", icon = icon("dollar"), color = "blue"
+      ans, "Billability", icon = icon("dollar"), color = "blue", width = 14
     )
   })
   
-  output$availabilityBox <- renderValueBox({
+  output$availabilityBox <- renderUI({
+    data <- finalFile()
+    goal <- data[!is.na(data$STAFF) & data$STAFF == input$consultantSelector, names(data)=="billable goal"]
+    assigned <- data[!is.na(data$STAFF) & data$STAFF == input$consultantSelector, names(data)=="Assigned Client Hours"]
+    ans <- goal - assigned
+    
     valueBox(
-      "10", "Availability", icon = icon("calendar"), color = "green"
+      ans, "Availability", icon = icon("calendar"), color = "green", width = 14
     )
   })
   
@@ -219,9 +232,12 @@ shinyServer(function(input, output) {
     )
   })
   
-  output$utilizationBox <- renderValueBox({
+  output$utilizationBox <- renderUI({
+    data <- finalFile()
+    ans <- paste0(data[!is.na(data$STAFF) & data$STAFF == input$consultantSelector, names(data)=="% Utilization"], "%")
+    
     valueBox(
-      paste0("25%"), "Utilization", icon = icon("calendar"), color = "green"
+      ans, "Utilization", icon = icon("calendar"), color = "green", width = 14
     )
   })
   
