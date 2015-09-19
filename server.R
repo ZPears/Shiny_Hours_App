@@ -42,6 +42,12 @@ shinyServer(function(input, output) {
     consultantData
   })
   
+  dateRange <- reactive({
+    (input$dateRange[2] - input$dateRange[1]) / 30
+  })
+  
+  
+  
   finalFile <- reactive({
     projData <- projData()
     if (is.null(projData)) return(NULL)
@@ -100,9 +106,13 @@ shinyServer(function(input, output) {
     )
   })
   
-  output$mytable <- renderDataTable({
-    finalFile()
-  })
+  output$dateRange <- renderText(
+    dateRange()
+  )
+  
+  #output$mytable <- renderDataTable({
+  #  finalFile()
+  #})
   
   #client dashboard valueboxes
   

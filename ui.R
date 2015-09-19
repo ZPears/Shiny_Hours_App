@@ -13,9 +13,12 @@ dashboardPage(
       menuItem("By Client", tabName="byclient", icon=icon("th")),
       menuItem("By Consultant", tabName="byconsultant", icon=icon("th"))
     ),
+    br(),
+    dateRangeInput('dateRange', label = 'Date Range', start = Sys.Date(), end = Sys.Date()),
     br(), br(),
     fileInput("hoursfile", "Upload Hours:", accept = c("text/csv", ".csv")),
     fileInput("projectionfile", "Upload Projections:", accept = c("application/vnd.ms-excel", '.xlsx')),
+    br(), br(),
     downloadButton("downloadData", "Download Spreadsheet")
   ),
   
@@ -41,7 +44,7 @@ dashboardPage(
         
         fluidRow(
           box(
-            dataTableOutput("mytable")
+            textOutput("dateRange")
           )
         )
         
