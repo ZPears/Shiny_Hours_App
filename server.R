@@ -46,8 +46,6 @@ shinyServer(function(input, output) {
     (input$dateRange[2] - input$dateRange[1]) / 30
   })
   
-  
-  
   finalFile <- reactive({
     projData <- projData()
     if (is.null(projData)) return(NULL)
@@ -57,6 +55,10 @@ shinyServer(function(input, output) {
     finalFile$`Billability -Client Only` <- round(finalFile$`Billability -Client Only` * 100, 2)
     finalFile$`% Utilization` <- round(finalFile$`% Utilization` * 100, 2)
     finalFile
+  })
+  
+  clientAlerts <- reactive({
+    findProjOverage(finalFile(), dateRange())
   })
   
   #download handler
@@ -108,6 +110,10 @@ shinyServer(function(input, output) {
   
   output$dateRange <- renderText(
     dateRange()
+  )
+  
+  output$clientAlerts <- renderText(
+    clientAlerts()
   )
   
   #output$mytable <- renderDataTable({

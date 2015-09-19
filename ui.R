@@ -5,8 +5,7 @@ library(openxlsx)
 
 dashboardPage(
   dashboardHeader(title = "Greenough Hours Dashboard"),
-  #Implement some message menus here
-  
+
   dashboardSidebar(
     sidebarMenu(
       menuItem("Overview", tabName="overview", icon=icon("dashboard")),
@@ -14,7 +13,7 @@ dashboardPage(
       menuItem("By Consultant", tabName="byconsultant", icon=icon("th"))
     ),
     br(),
-    dateRangeInput('dateRange', label = 'Date Range', start = Sys.Date(), end = Sys.Date()),
+    dateRangeInput('dateRange', label = 'Date Range', start = Sys.Date(), end = Sys.Date(),  format = "mm/dd/yy"),
     br(), br(),
     fileInput("hoursfile", "Upload Hours:", accept = c("text/csv", ".csv")),
     fileInput("projectionfile", "Upload Projections:", accept = c("application/vnd.ms-excel", '.xlsx')),
@@ -44,7 +43,7 @@ dashboardPage(
         
         fluidRow(
           box(
-            textOutput("dateRange")
+            textOutput("clientAlerts")
           )
         )
         
