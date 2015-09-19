@@ -98,6 +98,10 @@ shinyServer(function(input, output) {
     )
   })
   
+  output$mytable <- renderDataTable({
+    finalFile()
+  })
+  
   #client dashboard valueboxes
   
   output$totalRetainerBox <- renderUI({
@@ -117,10 +121,15 @@ shinyServer(function(input, output) {
 
   output$retainerSpentBox <- renderUI({
     data <- finalFile()
-    ans <- paste("$", as.character(!is.na(data$STAFF)  & data[data$STAFF == "Total retainer used", names(data)==input$clientSelector]))
+    if (input$clientSelector == "Agency") {
+      ans <- "NA"
+    } else {
+      ans <- data[!is.na(data$STAFF) & data$STAFF == "Total retainer used", names(data)==input$clientSelector]
+      ans <- paste0("$", ans)
+    }
     
     valueBox(
-      ans, "Retainer Used", icon = icon("dollar"), color = "blue", width=12
+      ans, "Retainer Used", icon = icon("dollar"), color = "blue", width = 14
     )
   })
   

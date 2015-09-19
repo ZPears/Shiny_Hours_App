@@ -1,15 +1,16 @@
 uncalcables <- c("Total hours plan", "Total retainer used", "Actual retainer", "OVERSERVICE", "SERVICE %", "EVP", "VP", "Director", "Manager", "Account Supervisor", "Account Executive")
 
 buildFinalData <- function(projData, hoursData) {
-  finalData <- projData[,!(names(projData) == '"A" Accounts')]
+  names(projData) <- gsub("\\.", " ", names(projData))
+  finalData <- projData[,!(names(projData) == '\"A\" Accounts')]
   for (staff in finalData$STAFF) {
     if (!is.na(staff) & !(staff %in% uncalcables)) {
-      hoursVector <- finalData[!is.na(finalData$STAFF) & finalData$STAFF == staff,][4:(which(colnames(finalData)=="billable goal")-1)]
-      finalData[!is.na(finalData$STAFF) & finalData$STAFF == staff,][4:(which(colnames(finalData)=="billable goal")-1)] <- calcHours(hoursData, hoursVector, staff)
+      hoursVector <- finalData[!is.na(finalData$STAFF) & finalData$STAFF == staff,][5:(which(colnames(finalData)=="billable goal")-1)]
+      finalData[!is.na(finalData$STAFF) & finalData$STAFF == staff,][5:(which(colnames(finalData)=="billable goal")-1)] <- calcHours(hoursData, hoursVector, staff)
     }
   }
-  
-  clientsLength <- 4:(which(colnames(finalData)=="billable goal")-1)
+
+  clientsLength <- 5:(which(colnames(finalData)=="billable goal")-1)
   
   for (colinc in clientsLength) {
     finalData[!is.na(finalData$STAFF) & finalData$STAFF=="Total retainer used", colinc] <- sumCol(finalData, colinc)
@@ -61,14 +62,14 @@ sumCol <- function(finalData, columnNumber) {
 }
 
 calcOverservice <- function(finalData, columnNumber) {
-  usage <- newFinal[!is.na(newFinal$STAFF) & newFinal$STAFF == "Total retainer used",columnNumber]
-  retainer <- newFinal[!is.na(newFinal$STAFF) & newFinal$STAFF == "Actual retainer",columnNumber]
+  usage <- finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Total retainer used",columnNumber]
+  retainer <- finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Actual retainer",columnNumber]
   return(usage - retainer)
 }
 
 calcOverPerc <- function(finalData, columnNumber) {
-  usage <- newFinal[!is.na(newFinal$STAFF) & newFinal$STAFF == "Total retainer used",columnNumber]
-  retainer <- newFinal[!is.na(newFinal$STAFF) & newFinal$STAFF == "Actual retainer",columnNumber]
+  usage <- finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Total retainer used",columnNumber]
+  retainer <- finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Actual retainer",columnNumber]
   perc <- round(usage / retainer, 2)
   if (!is.finite(perc)) {
     "No Data"
