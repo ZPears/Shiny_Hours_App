@@ -35,13 +35,11 @@ dashboardPage(
         fluidRow(
           box(
             title = "Alerts by Client:",
-            htmlOutput("clientAlerts"),
-            height = 500
+            htmlOutput("clientAlerts")
           ),
           
           box(
-            title = "Alerts by Consultant:",
-            height = 500
+            title = "Alerts by Consultant:"
           )
         )
         

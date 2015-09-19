@@ -62,7 +62,7 @@ shinyServer(function(input, output) {
     alerts <- findProjOverage(finalFile(), dateRange())
     output <- character(length=0)
     for (i in 1:length(alerts)) {
-      output <- append(output, paste0("<strong>", alerts[i], "</strong>", " has exceeded its retainer.", "<br/><br/>"))
+      output <- append(output, paste0("<div id=alert><strong>", alerts[i], "</strong></div>", " has exceeded its retainer.", "<br/><br/>"))
     }
     output
   })

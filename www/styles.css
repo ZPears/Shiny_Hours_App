@@ -2,3 +2,13 @@
 	color: #000000;
 	margin-left: 15px;
 }
+
+h3 {
+	text-align: center;
+	font-weight: bold;
+	color: #3c8dbc;
+}
+
+#alert {
+	color: red;
+}
