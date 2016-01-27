@@ -86,16 +86,14 @@ shinyServer(function(input, output) {
   
   underUtilAlerts <- reactive({
     if (is.null(finalFile())) return("<strong>Upload your files to begin.</strong>")
-    alerts <- findUnderUtil(projData(), finalFile(), dateRange())
-    print(alerts)
+    alerts <- findUnderUtil(projData(), finalFile(), dateRange(), hoursData())
     output <- character(length=0)
-    for (i in nrow(alerts)) {
-      consultant <- paste0("<div id=alert><strong>", alerts[i,1], "</strong></div><br/>")
+    for (i in 1:nrow(alerts)) {
+      consultant <- paste0("<div id=alert><strong>", alerts[i,1], "</strong></div>")
       goalPerc <- paste0("Billable Goal Percentage: <strong>", alerts[i,2], "</strong><br/>")
       hoursBilled <- paste0("Hours Billed: <strong>", alerts[i,3], "</strong><br/>")
-      agencyHrs <- paste0("Agency Hours: <strong>", alerts[i,4], "</strong><br/>")
+      agencyHrs <- paste0("Agency Hours: <strong>", alerts[i,4], "</strong><br/><br/>")
       output <- append(output, paste0(consultant, goalPerc, hoursBilled, agencyHrs))
-      print(output)
     }
     output
   })
