@@ -63,7 +63,7 @@ shinyServer(function(input, output) {
     alerts <- findProjOverage(finalFile(), dateRange())
     output <- character(length=0)
     for (i in 1:length(alerts)) {
-      output <- append(output, paste0("<div id=alert><strong>", alerts[i], "</strong></div>", " has exceeded its retainer. <strong>(", subset(finalFile(), STAFF == "SERVICE %", names(finalFile()) == alerts[i]),  ")</strong> <br/><br/>"))
+      output <- append(output, paste0("<div id=alert><strong>", alerts[i], "</strong></div>", " has used <strong>", subset(finalFile(), STAFF == "SERVICE %", names(finalFile()) == alerts[i]),  "</strong> of its retainer for the month. <br/><br/>"))
     }
     output
   })
@@ -75,13 +75,10 @@ shinyServer(function(input, output) {
     uniqueVals <- (unique(as.character(alerts[,1])))
     for (consultant in uniqueVals) {
       overagesByConsult <- subset(alerts, alerts[,1] == consultant)
-      print(overagesByConsult)
       formattedOverages <- character(length=0)
-      print(1:nrow(overagesByConsult))
       for (i in 1:nrow(overagesByConsult)) {
-        formattedOverages <- paste0(formattedOverages, paste0("<strong>", overagesByConsult[i,2], "</strong> by <strong>X%</strong><br/> "))
+        formattedOverages <- paste0(formattedOverages, paste0("<strong>", overagesByConsult[i,2], "</strong> by <strong>", overagesByConsult[i,3], "</strong><br/> "))
       }
-      print(length(formattedOverages))
       output <- append(output, paste0("<div id=alert><strong>", consultant, "</strong></div>", " has exceeded his/her projection on: <br/>", formattedOverages, "<br/>"))
     }
     output

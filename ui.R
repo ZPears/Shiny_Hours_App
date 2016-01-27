@@ -34,21 +34,22 @@ dashboardPage(
               
         fluidRow(
           box(
-            title = "Alerts by Client:",
-            htmlOutput("clientAlerts")
+            title = "Clients > 15% Over Retainer:",
+            htmlOutput("clientAlerts"),
+            width = 4
           ),
           
           box(
-            title = "Consultants over Projections:",
-            htmlOutput("consultantAlerts")
+            title = "Consultants > 20% Over Projections:",
+            htmlOutput("consultantAlerts"),
+            width = 4
+          ),
+          
+          box(
+            title = "Consultants < 70% Billable:",
+            width = 4
           )
         )
-        
-        #fluidRow(
-        #  box(
-        #    textOutput("clientAlerts")
-        #  )
-        #)
         
       ),
       

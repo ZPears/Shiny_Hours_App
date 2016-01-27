@@ -100,13 +100,22 @@ findConsultOverage <- function(projData, finalData, dateRange) {
   consultants <- finalData$STAFF[!is.na(finalData$STAFF) & !(finalData$STAFF %in% uncalcables)]
   consultWarnings <- character(length=0)
   clientWarnings <- character(length=0)
+  percOver <- numeric(length=0)
   for (consultant in consultants) {
     for (i in clientsLength) {
-      if (as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant,i]) > (projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i] * as.numeric(dateRange) * 1.20)) {
+      actual <- as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant,i])
+      threshold <- (projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i] * as.numeric(dateRange))
+      if (actual > (threshold * 1.20)) {
         consultWarnings <- append(consultWarnings, consultant)
         clientWarnings <- append(clientWarnings, names(finalData[,i:(i+1)][1]))
+        overage <- round((actual/threshold) * 100 - 100, 0)
+        if (!is.infinite(overage)) {
+          percOver <- append(percOver, paste0(as.character(round((actual/threshold) * 100 - 100, 0)), "%"))
+        } else {
+          percOver <- append(percOver, "no hours allotted.")
+        }
       }
     }
   }
-  data.frame(consultWarnings, clientWarnings)
+  data.frame(consultWarnings, clientWarnings, percOver)
 }
