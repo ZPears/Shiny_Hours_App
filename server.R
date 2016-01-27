@@ -53,7 +53,7 @@ shinyServer(function(input, output) {
     hoursData <- hoursData()
     if (is.null(hoursData)) return(NULL)
     finalFile <- buildFinalData(projData, hoursData)
-    finalFile$`Billability -Client Only` <- round(finalFile$`Billability -Client Only` * 100, 2)
+    finalFile$`Billability -Client Only` <- round(finalFile$`Billability -Client Only` * 100, 0)
     finalFile$`% Utilization` <- round(finalFile$`% Utilization` * 100, 2)
     finalFile
   })

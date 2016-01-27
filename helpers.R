@@ -19,6 +19,13 @@ buildFinalData <- function(projData, hoursData) {
     finalData[!is.na(finalData$STAFF) & finalData$STAFF=="Total hours plan", colinc] <- calcHoursUsed(finalData, colinc)
   }
   
+  consultants <- finalData$STAFF[!is.na(finalData$STAFF) & !(finalData$STAFF %in% uncalcables) & finalData$STAFF != c("Phil Greenough", "Jamie Parker")]
+  
+  for (consultant in consultants) {
+    total <- sum(subset(hoursData, Consultant == consultant & Client != "Agency")[,"Total.Hours"])
+    finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant, "hours billed"] <- total
+  }
+  
   finalData
 }
 
@@ -129,10 +136,10 @@ findUnderUtil <- function(projData, finalData, dateRange, hoursData) {
   agencyHours <- numeric(length=0)
   for (consultant in consultants) {
     consultantActuals <- hoursData[hoursData$Consultant ==  consultant, ]
-    billable <- sum(subset(data, Consultant == consultant & Client != "Agency")[,"Total.Hours"])
-    agencyHrs <- sum(subset(data, Consultant == consultant & Client == "Agency")[,"Total.Hours"])
+    billable <- sum(subset(consultantActuals, Consultant == consultant & Client != "Agency")[,"Total.Hours"])
+    agencyHrs <- sum(subset(consultantActuals, Consultant == consultant & Client == "Agency")[,"Total.Hours"])
     goal <- as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant, "billable goal"] * as.numeric(dateRange))
-    threshold <- goal * .7
+    threshold <- goal * .85
     if (billable <= threshold) {
       consultUnders <- append(consultUnders, consultant)
       actual <- round((billable/goal) * 100, 0)
@@ -141,9 +148,9 @@ findUnderUtil <- function(projData, finalData, dateRange, hoursData) {
         billedHours <- append(billedHours, billable)
         agencyHours <- append(agencyHours, agencyHrs)
       } else {
-        percActual <- append(percActual, "no hours entered.")
-        billedHours <- append(billedHours, "no hours entered.")
-        agencyHours <- append(agencyHours, "no hours entered.")
+        percActual <- append(percActual, "0%")
+        billedHours <- append(billedHours, "0")
+        agencyHours <- append(agencyHours, "0")
       }
     }
   }
