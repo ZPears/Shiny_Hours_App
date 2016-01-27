@@ -23,7 +23,6 @@ buildFinalData <- function(projData, hoursData) {
 }
 
 calcHours <- function(hoursData, hoursVector, staff) {
-
   finalVector <- hoursVector
   newHoursVec <- hoursData[hoursData$Consultant == staff,]
   newHoursVec <- newHoursVec[order(newHoursVec$Client, newHoursVec$Project),]
@@ -87,7 +86,7 @@ findProjOverage <- function(finalData, dateRange) {
   clientsLength <- (which(colnames(finalData)=="Rate")+1):(which(colnames(finalData)=="billable goal")-1)
   warnings <- character(length=0)
   for (colinc in clientsLength) {
-    projected <- (as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Actual retainer",colinc]) * dateRange) * 1.05
+    projected <- (as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Actual retainer",colinc]) * as.numeric(dateRange)) * 1.05
     actual <- as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Total retainer used",colinc])
     if (actual > projected) {
       warnings <- append(warnings, names(finalData[,colinc:(colinc+1)][1]))
@@ -102,14 +101,15 @@ findConsultOverage <- function(projData, finalData, dateRange) {
   consultWarnings <- character(length=0)
   clientWarnings <- character(length=0)
   for (consultant in consultants) {
+    print(consultant)
     for (i in clientsLength) {
-      if (as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant,i]) > projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i] * dateRange) {
-        print(paste(consultant, names(finalData[,i:(i+1)])[1]))
-        print(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant,i])
-        print(projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i])
-        print(dateRange)
+      if (as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant,i]) > (projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i] * as.numeric(dateRange) * 1.20)) {
         consultWarnings <- append(consultWarnings, consultant)
         clientWarnings <- append(clientWarnings, names(finalData[,i:(i+1)][1]))
+        print(names(finalData[,i:(i+1)][1]))
+        print(paste("Actual: ", finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant,i]))
+        print(paste("Projected: ", as.character(projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i] * as.numeric(dateRange))))
+        print(paste("Projected * 1.2: ", as.character(projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i] * as.numeric(dateRange) * 1.20)))
       }
     }
   }

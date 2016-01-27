@@ -39,7 +39,7 @@ dashboardPage(
           ),
           
           box(
-            title = "Alerts by Consultant:",
+            title = "Consultants over Projections:",
             htmlOutput("consultantAlerts")
           )
         )
