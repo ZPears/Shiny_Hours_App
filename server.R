@@ -79,7 +79,23 @@ shinyServer(function(input, output) {
       for (i in 1:nrow(overagesByConsult)) {
         formattedOverages <- paste0(formattedOverages, paste0("<strong>", overagesByConsult[i,2], "</strong> by <strong>", overagesByConsult[i,3], "</strong><br/> "))
       }
-      output <- append(output, paste0("<div id=alert><strong>", consultant, "</strong></div>", " has exceeded his/her projection on: <br/>", formattedOverages, "<br/>"))
+      output <- append(output, paste0("<div id=alert><strong>", consultant, "</strong></div>", " has exceeded his/her month-to-date projection on: <br/>", formattedOverages, "<br/>"))
+    }
+    output
+  })
+  
+  underUtilAlerts <- reactive({
+    if (is.null(finalFile())) return("<strong>Upload your files to begin.</strong>")
+    alerts <- findUnderUtil(projData(), finalFile(), dateRange())
+    print(alerts)
+    output <- character(length=0)
+    for (i in nrow(alerts)) {
+      consultant <- paste0("<div id=alert><strong>", alerts[i,1], "</strong></div><br/>")
+      goalPerc <- paste0("Billable Goal Percentage: <strong>", alerts[i,2], "</strong><br/>")
+      hoursBilled <- paste0("Hours Billed: <strong>", alerts[i,3], "</strong><br/>")
+      agencyHrs <- paste0("Agency Hours: <strong>", alerts[i,4], "</strong><br/>")
+      output <- append(output, paste0(consultant, goalPerc, hoursBilled, agencyHrs))
+      print(output)
     }
     output
   })
@@ -147,9 +163,11 @@ shinyServer(function(input, output) {
     )
   )
   
-  #output$mytable <- renderDataTable({
-  #  finalFile()
-  #})
+  output$underUtilAlerts <- renderUI(
+    HTML(
+      underUtilAlerts()
+    )
+  )
   
   #client dashboard valueboxes
   

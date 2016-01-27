@@ -10,7 +10,7 @@ buildFinalData <- function(projData, hoursData) {
     }
   }
 
-  clientsLength <- (which(colnames(finalData)=="Rate")+1):(which(colnames(finalData)=="billable goal")-1)
+  clientsLength <- (which(colnames(finalData)=="Agency")+1):(which(colnames(finalData)=="billable goal")-1)
   
   for (colinc in clientsLength) {
     finalData[!is.na(finalData$STAFF) & finalData$STAFF=="Total retainer used", colinc] <- sumCol(finalData, colinc)
@@ -83,7 +83,7 @@ calcOverPerc <- function(finalData, columnNumber) {
 }
 
 findProjOverage <- function(finalData, dateRange) {
-  clientsLength <- (which(colnames(finalData)=="Rate")+1):(which(colnames(finalData)=="billable goal")-1)
+  clientsLength <- (which(colnames(finalData)=="Agency")+1):(which(colnames(finalData)=="billable goal")-1)
   warnings <- character(length=0)
   for (colinc in clientsLength) {
     projected <- (as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == "Actual retainer",colinc]) * as.numeric(dateRange)) * 1.05
@@ -96,7 +96,7 @@ findProjOverage <- function(finalData, dateRange) {
 }
 
 findConsultOverage <- function(projData, finalData, dateRange) {
-  clientsLength <- (which(colnames(finalData)=="Rate")+1):(which(colnames(finalData)=="billable goal")-1)
+  clientsLength <- (which(colnames(finalData)=="Agency")+1):(which(colnames(finalData)=="billable goal")-1)
   consultants <- finalData$STAFF[!is.na(finalData$STAFF) & !(finalData$STAFF %in% uncalcables)]
   consultWarnings <- character(length=0)
   clientWarnings <- character(length=0)
@@ -110,7 +110,7 @@ findConsultOverage <- function(projData, finalData, dateRange) {
         clientWarnings <- append(clientWarnings, names(finalData[,i:(i+1)][1]))
         overage <- round((actual/threshold) * 100 - 100, 0)
         if (!is.infinite(overage)) {
-          percOver <- append(percOver, paste0(as.character(round((actual/threshold) * 100 - 100, 0)), "%"))
+          percOver <- append(percOver, paste0(as.character(overage), "%"))
         } else {
           percOver <- append(percOver, "no hours allotted.")
         }
@@ -118,4 +118,35 @@ findConsultOverage <- function(projData, finalData, dateRange) {
     }
   }
   data.frame(consultWarnings, clientWarnings, percOver)
+}
+
+findUnderUtil <- function(projData, finalData, dateRange) {
+  clientsLength <- (which(colnames(finalData)=="Agency")+1):(which(colnames(finalData)=="billable goal")-1)
+  consultants <- finalData$STAFF[!is.na(finalData$STAFF) & !(finalData$STAFF %in% uncalcables)]
+  consultUnders <- character(length=0)
+  percUnder <- numeric(length=0)
+  billedHours <- numeric(length=0)
+  agencyHours <- numeric(length=0)
+  for (consultant in consultants) {
+    billable <- sum(as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant, clientsLength]))
+    print(consultant)
+    print(billable)
+    agencyHrs <- as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant, "Agency"])
+    goal <- as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant, "billable goal"] * as.numeric(dateRange))
+    threshold <- goal * .7
+    if (billable <= threshold) {
+      consultUnders <- append(consultUnders, consultant)
+      underage <- round((billable/goal) * 100 - 100, 0)
+      if (!is.infinite(underage)) {
+        percUnder <- append(percUnder, paste0(as.character(underage), "%"))
+        billedHours <- append(billedHours, billable)
+        agencyHours <- append(agencyHours, agencyHrs)
+      } else {
+        percUnder <- append(percUnder, "no hours entered.")
+        billedHours <- append(billedHours, "no hours entered.")
+        agencyHours <- append(agencyHours, "no hours entered.")
+      }
+    }
+  }
+  data.frame(consultUnders, percUnder, billedHours, agencyHours)
 }

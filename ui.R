@@ -47,6 +47,7 @@ dashboardPage(
           
           box(
             title = "Consultants < 70% Billable:",
+            htmlOutput("underUtilAlerts"),
             width = 4
           )
         )
