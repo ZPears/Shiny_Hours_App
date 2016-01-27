@@ -72,8 +72,17 @@ shinyServer(function(input, output) {
     if (is.null(finalFile())) return("<strong>Upload your files to begin.</strong>")
     alerts <- findConsultOverage(projData(), finalFile(), dateRange())
     output <- character(length=0)
-    for (i in 1:nrow(alerts)) {
-      output <- append(output, paste0("<div id=alert><strong>", alerts[i,1], "</strong></div>", " has exceeded his/her projection on: <strong></br>", alerts[i,2], "</strong> by <strong>X%</strong><br/><br/>"))
+    uniqueVals <- (unique(as.character(alerts[,1])))
+    for (consultant in uniqueVals) {
+      overagesByConsult <- subset(alerts, alerts[,1] == consultant)
+      print(overagesByConsult)
+      formattedOverages <- character(length=0)
+      print(1:nrow(overagesByConsult))
+      for (i in 1:nrow(overagesByConsult)) {
+        formattedOverages <- paste0(formattedOverages, paste0("<strong>", overagesByConsult[i,2], "</strong> by <strong>X%</strong><br/> "))
+      }
+      print(length(formattedOverages))
+      output <- append(output, paste0("<div id=alert><strong>", consultant, "</strong></div>", " has exceeded his/her projection on: <br/>", formattedOverages, "<br/>"))
     }
     output
   })

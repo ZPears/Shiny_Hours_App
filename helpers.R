@@ -101,15 +101,10 @@ findConsultOverage <- function(projData, finalData, dateRange) {
   consultWarnings <- character(length=0)
   clientWarnings <- character(length=0)
   for (consultant in consultants) {
-    print(consultant)
     for (i in clientsLength) {
       if (as.numeric(finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant,i]) > (projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i] * as.numeric(dateRange) * 1.20)) {
         consultWarnings <- append(consultWarnings, consultant)
         clientWarnings <- append(clientWarnings, names(finalData[,i:(i+1)][1]))
-        print(names(finalData[,i:(i+1)][1]))
-        print(paste("Actual: ", finalData[!is.na(finalData$STAFF) & finalData$STAFF == consultant,i]))
-        print(paste("Projected: ", as.character(projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i] * as.numeric(dateRange))))
-        print(paste("Projected * 1.2: ", as.character(projData[!is.na(projData$STAFF) & projData$STAFF == consultant,i] * as.numeric(dateRange) * 1.20)))
       }
     }
   }
